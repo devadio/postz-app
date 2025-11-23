@@ -5,36 +5,50 @@ services:
   postiz-app:
     build:
       context: .
-      dockerfile: Dockerfile.dev   # <--- FIXED: Points to your actual file
+      dockerfile: Dockerfile.dev
     restart: always
+    # FIX: Map external 3005 to internal 3000 to avoid "Port already allocated" error
     ports:
       - "3006:3000"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - REDIS_URL=${REDIS_URL}
+      - MAIN_URL=${MAIN_URL}
       - FRONTEND_URL=${FRONTEND_URL}
       - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
       - BACKEND_INTERNAL_URL=${BACKEND_INTERNAL_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - IS_GENERAL=${IS_GENERAL}
+      - STORAGE_PROVIDER=${STORAGE_PROVIDER}
+      - UPLOAD_DIRECTORY=${UPLOAD_DIRECTORY}
+      - NEXT_PUBLIC_UPLOAD_DIRECTORY=${NEXT_PUBLIC_UPLOAD_DIRECTORY}
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - postiz-network
+    volumes:
+      - postiz-uploads:/uploads
 
-  # === DATABASE ===
+  # === POSTGRES ===
   postgres:
     image: postgres:17-alpine
     restart: always
     environment:
-      # We use default values here in case the variables are empty
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postiz-local-pwd}
-      POSTGRES_USER: ${POSTGRES_USER:-postiz-local}
-      POSTGRES_DB: ${POSTGRES_DB:-postiz-db-local}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres-volume:/var/lib/postgresql/data
+      - postiz-data-v2:/var/lib/postgresql/data
     networks:
       - postiz-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # === REDIS ===
   redis:
@@ -42,9 +56,16 @@ services:
     restart: always
     networks:
       - postiz-network
-
-volumes:
-  postgres-volume:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 networks:
   postiz-network:
+
+volumes:
+  # Renamed volume to ensure a fresh database is created
+  postiz-data-v2:
+  postiz-uploads:
