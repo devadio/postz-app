@@ -13,6 +13,14 @@ RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1 pm2
 WORKDIR /app
 
 COPY . /app
+# +++ ADD THESE LINES +++
+ARG NEXT_PUBLIC_IS_GENERAL
+ENV NEXT_PUBLIC_IS_GENERAL=$NEXT_PUBLIC_IS_GENERAL
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ARG FRONTEND_URL
+ENV FRONTEND_URL=$FRONTEND_URL
+# +++ END ADD +++
 COPY var/docker/nginx.conf /etc/nginx/nginx.conf
 
 RUN pnpm install
