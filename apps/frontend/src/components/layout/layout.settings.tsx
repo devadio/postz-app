@@ -90,19 +90,31 @@ export const LayoutSettings = ({ children }: { children: ReactNode }) => {
           <div className="min-h-[100vh] w-full max-w-[1440px] mx-auto bg-primary px-6 text-textColor flex flex-col">
             {user?.admin && <Impersonate />}
             <nav className="flex items-center justify-between">
-             <Link
+            <Link
   href="/"
   className="text-2xl flex items-center gap-[10px] text-textColor order-1"
 >
+  {/* اللوجو القديم */}
   <div className="min-w-[55px]">
     <Image
-      src="/postiz-text.svg" // هنا اللوجو الجديد
-      width={55}             // ممكن تغيّر الأبعاد حسب حجم اللوجو
+      src="/postiz.svg"
+      width={55}
       height={53}
-      alt="Logo"
+      alt="Old Logo"
+    />
+  </div>
+
+  {/* اللوجو الجديد */}
+  <div className="min-w-[55px]">
+    <Image
+      src="/postiz-text.svg"
+      width={55}
+      height={53}
+      alt="New Logo"
     />
   </div>
 </Link>
+
 
               {user?.orgId &&
               (user.tier !== 'FREE' || !isGeneral || !billingEnabled) ? (
