@@ -27,6 +27,11 @@ services:
     volumes:
       - postiz-uploads:/uploads
       - postiz-config:/config
+      # === DEV MODE: Mount source for instant changes ===
+      # Uncomment these for development (no rebuild needed):
+      # - ./apps:/app/apps
+      # - ./libraries:/app/libraries
+      # - ./package.json:/app/package.json
     
     environment:
       # === CORE URLs ===
@@ -69,70 +74,39 @@ services:
       POSTIZ_OAUTH_SCOPE: ${POSTIZ_OAUTH_SCOPE:-}
       
       # === SOCIAL MEDIA API KEYS ===
-      # LinkedIn
       LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
       LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}
-      
-      # Telegram
       TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME}
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
       NTBA_FIX_350: 1
-      
-      # X (Twitter)
       X_API_KEY: ${X_API_KEY}
       X_API_SECRET: ${X_API_SECRET}
-      
-      # TikTok
       TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID}
       TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET}
-      
-      # Pinterest
       PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID}
       PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET}
-      
-      # Facebook
       FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
-      
-      # Instagram
       INSTAGRAM_APP_ID: ${INSTAGRAM_APP_ID}
       INSTAGRAM_APP_SECRET: ${INSTAGRAM_APP_SECRET}
-      
-      # YouTube
       YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID}
       YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET}
-      
-      # Reddit (Optional - commented in your original)
       REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-}
       REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-}
-      
-      # GitHub (Optional)
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
-      
-      # Beehiive (Optional)
       BEEHIIVE_API_KEY: ${BEEHIIVE_API_KEY:-}
       BEEHIIVE_PUBLICATION_ID: ${BEEHIIVE_PUBLICATION_ID:-}
-      
-      # Threads (Optional)
       THREADS_APP_ID: ${THREADS_APP_ID:-}
       THREADS_APP_SECRET: ${THREADS_APP_SECRET:-}
-      
-      # Dribbble (Optional)
       DRIBBBLE_CLIENT_ID: ${DRIBBBLE_CLIENT_ID:-}
       DRIBBBLE_CLIENT_SECRET: ${DRIBBBLE_CLIENT_SECRET:-}
-      
-      # Discord (Optional)
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
       DISCORD_BOT_TOKEN_ID: ${DISCORD_BOT_TOKEN_ID:-}
-      
-      # Slack (Optional)
       SLACK_ID: ${SLACK_ID:-}
       SLACK_SECRET: ${SLACK_SECRET:-}
       SLACK_SIGNING_SECRET: ${SLACK_SIGNING_SECRET:-}
-      
-      # Mastodon (Optional)
       MASTODON_URL: ${MASTODON_URL:-}
       MASTODON_CLIENT_ID: ${MASTODON_CLIENT_ID:-}
       MASTODON_CLIENT_SECRET: ${MASTODON_CLIENT_SECRET:-}
