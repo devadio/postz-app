@@ -206,14 +206,14 @@ export function RegisterAfter({
             'By registering you agree to our'
           )}&nbsp;
           <a
-            href={`https://postiz.com/terms`}
+            href={`https://devad.io/terms-of-service`}
             className="underline hover:font-bold"
           >
             {t('terms_of_service', 'Terms of Service')}
           </a>&nbsp;
           {t('and', 'and')}&nbsp;
           <a
-            href={`https://postiz.com/privacy`}
+            href={`https://devad.io/privacy-policy`}
             className="underline hover:font-bold"
           >
             {t('privacy_policy', 'Privacy Policy')}
