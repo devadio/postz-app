@@ -103,9 +103,7 @@ export const SettingsPopup: FC<{
     if (user?.tier.current !== 'FREE') {
       arr.push({ tab: 'signatures', label: t('signatures', 'Signatures') });
     }
-    if (user?.tier?.public_api && isGeneral && showLogout) {
-      arr.push({ tab: 'api', label: t('public_api', 'Public API') });
-    }
+   
 
     return arr;
   }, [user, isGeneral, showLogout, t]);
@@ -194,14 +192,7 @@ export const SettingsPopup: FC<{
                 </div>
               )}
 
-              {tab === 'api' &&
-                !!user?.tier?.public_api &&
-                isGeneral &&
-                showLogout && (
-                  <div>
-                    <PublicComponent />
-                  </div>
-                )}
+             
             </div>
           </form>
         </FormProvider>
