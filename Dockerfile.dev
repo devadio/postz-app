@@ -5,11 +5,16 @@ ARG NEXT_PUBLIC_VERSION
 ARG NEXT_PUBLIC_IS_GENERAL
 ARG NEXT_PUBLIC_BACKEND_URL
 ARG FRONTEND_URL
+# Add build timestamp to force cache bust on static assets
+ARG BUILD_DATE
+ARG CACHE_BUST_TOKEN
 
 ENV NEXT_PUBLIC_VERSION=$NEXT_PUBLIC_VERSION
 ENV NEXT_PUBLIC_IS_GENERAL=$NEXT_PUBLIC_IS_GENERAL
 ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 ENV FRONTEND_URL=$FRONTEND_URL
+ENV BUILD_DATE=$BUILD_DATE
+ENV CACHE_BUST_TOKEN=$CACHE_BUST_TOKEN
 
 # Install system dependencies
 RUN apk add --no-cache g++ make py3-pip bash nginx
@@ -25,20 +30,29 @@ RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1 pm2
 
 WORKDIR /app
 
-# OPTIMIZATION: Copy package files first (these change rarely)
+# === OPTIMIZATION LAYER 1: Dependencies (rarely change) ===
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Install dependencies (this layer will be cached if package files don't change)
 RUN pnpm install --frozen-lockfile
 
-# Copy nginx config
+# === OPTIMIZATION LAYER 2: Nginx config (rarely changes) ===
 COPY var/docker/nginx.conf /etc/nginx/nginx.conf
 
-# OPTIMIZATION: Copy source code last (this changes frequently)
+# === LAYER 3: Source code (changes frequently) ===
 COPY . /app
 
-# Build application
+# === CACHE BUSTING FOR STATIC ASSETS ===
+# Create a version file that Next.js can read
+RUN echo "{ \"buildDate\": \"${BUILD_DATE:-$(date +%s)}\", \"cacheBust\": \"${CACHE_BUST_TOKEN:-$(date +%s)}\" }" > /app/apps/frontend/public/build-info.json
+
+# Build application with cache busting enabled
 RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+
+# Add cache headers to nginx for proper static asset handling
+RUN echo 'location ~* \.(svg|png|jpg|jpeg|gif|ico|css|js)$ { \
+    expires 1h; \
+    add_header Cache-Control "public, must-revalidate, proxy-revalidate"; \
+    add_header X-Cache-Bust "${CACHE_BUST_TOKEN}"; \
+}' > /tmp/cache-headers.conf
 
 # Expose port
 EXPOSE 3000
