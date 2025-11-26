@@ -94,7 +94,7 @@ export const LayoutSettings = ({ children }: { children: ReactNode }) => {
   href="/"
   className="text-2xl flex items-center gap-[10px] text-textColor order-1"
 >
-  {/* اللوجو القديم */}
+  
   <div className="min-w-[55px]">
     <Image
       src="/postiz.svg"
@@ -103,8 +103,6 @@ export const LayoutSettings = ({ children }: { children: ReactNode }) => {
       alt="Old Logo"
     />
   </div>
-
-  {/* اللوجو الجديد */}
   <div className="min-w-[55px]">
     <Image
       src="/postiz-text.svg"
