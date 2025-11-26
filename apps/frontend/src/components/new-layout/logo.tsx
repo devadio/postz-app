@@ -5,7 +5,7 @@ import React from "react";
 export const Logo = () => {
   return (
     <img
-      src="/postiz-text.svg"
+      src="/postiz.svg"
       alt="Logo"
       width={60}
       height={60}
@@ -15,3 +15,4 @@ export const Logo = () => {
 };
 
 export default Logo;
+
