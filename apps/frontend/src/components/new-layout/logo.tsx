@@ -1,5 +1,7 @@
 'use client';
 
+import React from "react";
+
 export const Logo = () => {
   return (
     <img
@@ -11,3 +13,5 @@ export const Logo = () => {
     />
   );
 };
+
+export default Logo;
