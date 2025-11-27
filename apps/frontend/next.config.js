@@ -5,7 +5,7 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig = {
   experimental: {
     proxyTimeout: 90_000,
-     optimizeCss: true,
+     optimizeCss: false,
     
   },
   // Document-Policy header for browser profiling
