@@ -58,9 +58,10 @@ export class AuthController {
         userAgent,
         getOrgFromCookie
       );
+          const activationRequired = false;
 
-      const activationRequired =
-        body.provider === 'LOCAL' && this._emailService.hasProvider();
+      // const activationRequired =
+        // body.provider === 'LOCAL' && this._emailService.hasProvider();
 
       if (activationRequired) {
         response.header('activate', 'true');
