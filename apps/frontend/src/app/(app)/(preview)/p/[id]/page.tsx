@@ -64,7 +64,7 @@ export default async function Auth({
                       alt="Logo"
                     />
                   </div>
-                  <div>
+                  <div className="hidden">
                     <svg
                       width="80"
                       height="75"
