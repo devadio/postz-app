@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postiz-app:
     build:
@@ -7,88 +9,64 @@ services:
         NEXT_PUBLIC_IS_GENERAL: "true"
         NEXT_PUBLIC_BACKEND_URL: "https://postz2.devad.io/api"
         FRONTEND_URL: "https://postz2.devad.io"
+        BUILD_DATE: "${BUILD_DATE:-latest}"
+        CACHE_BUST_TOKEN: "${CACHE_BUST_TOKEN:-v1}"
     
-    container_name: postiz-fork
+    # REMOVED: container_name: postiz-fork (Causes conflicts)
     restart: always
     ports:
-      - "3005:3000"
-    
+      - "3006:3000" # CHANGED: 3005 -> 3006
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
     networks:
       - dokploy-network
-    
     volumes:
       - postiz-uploads:/uploads
       - postiz-config:/config
-      # === DEV MODE: Mount source for instant changes ===
-      # Uncomment these for development (no rebuild needed):
-      # - ./apps:/app/apps
-      # - ./libraries:/app/libraries
-      # - ./package.json:/app/package.json
-    
     environment:
-      # === CORE URLs ===
       MAIN_URL: ${MAIN_URL}
       FRONTEND_URL: ${FRONTEND_URL}
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
-      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL}
-      
-      # === SECRETS ===
+      BACKEND_INTERNAL_URL: http://postiz-app:3000
       JWT_SECRET: ${JWT_SECRET}
-      
-      # === DATABASE & REDIS ===
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
-      
-      # === FEATURE FLAGS ===
       IS_GENERAL: ${IS_GENERAL}
       NEXT_PUBLIC_IS_GENERAL: ${NEXT_PUBLIC_IS_GENERAL}
       DISABLE_REGISTRATION: ${DISABLE_REGISTRATION}
       API_LIMIT: ${API_LIMIT:-30}
-      
-      # === STORAGE ===
       STORAGE_PROVIDER: ${STORAGE_PROVIDER}
       UPLOAD_DIRECTORY: ${UPLOAD_DIRECTORY}
       NEXT_PUBLIC_UPLOAD_DIRECTORY: ${NEXT_PUBLIC_UPLOAD_DIRECTORY}
-      
-      # === EMAIL (Resend) ===
-      EMAIL_PROVIDER: ${EMAIL_PROVIDER}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
-      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
-      
-      # === OAUTH DISABLED ===
-      POSTIZ_GENERIC_OAUTH: ${POSTIZ_GENERIC_OAUTH}
-      NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME: ${NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-resend}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-Postiz}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-noreply@example.com}
+      POSTIZ_GENERIC_OAUTH: ${POSTIZ_GENERIC_OAUTH:-false}
+      NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME: ${NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME:-}
       NEXT_PUBLIC_POSTIZ_OAUTH_LOGO_URL: ${NEXT_PUBLIC_POSTIZ_OAUTH_LOGO_URL:-}
       POSTIZ_OAUTH_URL: ${POSTIZ_OAUTH_URL:-}
       POSTIZ_OAUTH_CLIENT_ID: ${POSTIZ_OAUTH_CLIENT_ID:-}
       POSTIZ_OAUTH_CLIENT_SECRET: ${POSTIZ_OAUTH_CLIENT_SECRET:-}
       POSTIZ_OAUTH_SCOPE: ${POSTIZ_OAUTH_SCOPE:-}
-      
-      # === SOCIAL MEDIA API KEYS ===
-      LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
-      LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}
-      TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME}
-      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+      LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID:-}
+      LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET:-}
+      TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME:-}
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN:-}
       NTBA_FIX_350: 1
-      X_API_KEY: ${X_API_KEY}
-      X_API_SECRET: ${X_API_SECRET}
-      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID}
-      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET}
-      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID}
-      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET}
-      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
-      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
-      INSTAGRAM_APP_ID: ${INSTAGRAM_APP_ID}
-      INSTAGRAM_APP_SECRET: ${INSTAGRAM_APP_SECRET}
-      YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID}
-      YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET}
+      X_API_KEY: ${X_API_KEY:-}
+      X_API_SECRET: ${X_API_SECRET:-}
+      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID:-}
+      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET:-}
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
+      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+      INSTAGRAM_APP_ID: ${INSTAGRAM_APP_ID:-}
+      INSTAGRAM_APP_SECRET: ${INSTAGRAM_APP_SECRET:-}
+      YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID:-}
+      YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET:-}
       REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-}
       REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
@@ -111,20 +89,16 @@ services:
 
   postgres:
     image: postgres:17-alpine
-    container_name: postiz-fork-postgres
+    # REMOVED: container_name: postiz-fork-postgres
     restart: unless-stopped
-    
     networks:
       - dokploy-network
-    
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    
     volumes:
       - postiz-postgres-data:/var/lib/postgresql/data
-    
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -133,15 +107,12 @@ services:
 
   redis:
     image: redis:7.2-alpine
-    container_name: postiz-fork-redis
+    # REMOVED: container_name: postiz-fork-redis
     restart: unless-stopped
-    
     networks:
       - dokploy-network
-    
     volumes:
       - postiz-redis-data:/data
-    
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
