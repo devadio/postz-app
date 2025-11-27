@@ -42,10 +42,10 @@ export class AuthMiddleware implements NestMiddleware {
       if (!user) {
         throw new HttpForbiddenException();
       }
-
-      if (!user.activated) {
-        throw new HttpForbiddenException();
-      }
+          // مؤقت يا عبدالله 
+      // if (!user.activated) {
+      //   throw new HttpForbiddenException();
+      // }
 
       const impersonate = req.cookies.impersonate || req.headers.impersonate;
       if (user?.isSuperAdmin && impersonate) {
