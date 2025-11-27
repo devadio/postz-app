@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile.dev
       args:
         NEXT_PUBLIC_IS_GENERAL: "true"
-        NEXT_PUBLIC_BACKEND_URL: "https://postz2.devad.io/api"
-        FRONTEND_URL: "https://postz2.devad.io"
+        NEXT_PUBLIC_BACKEND_URL: "https://postz.devad.io/api"
+        FRONTEND_URL: "https://postz.devad.io"
         BUILD_DATE: "${BUILD_DATE:-latest}"
         CACHE_BUST_TOKEN: "${CACHE_BUST_TOKEN:-v1}"
     
