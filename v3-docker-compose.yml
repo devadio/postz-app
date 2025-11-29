@@ -7,13 +7,10 @@ services:
         NEXT_PUBLIC_IS_GENERAL: "true"
         NEXT_PUBLIC_BACKEND_URL: "https://postz.devad.io/api"
         FRONTEND_URL: "https://postz.devad.io"
-        BUILD_DATE: "2024-11-29"
+        BUILD_DATE: "latest"
         CACHE_BUST_TOKEN: "v2"
     
     restart: always
-    # Dokploy handles external ports via Traefik/Nginx proxy. 
-    # We do not need to expose ports manually here unless testing locally.
-    
     depends_on:
       postgres:
         condition: service_healthy
@@ -28,37 +25,23 @@ services:
       - postiz-config:/config
     
     environment:
-      # URLs
       MAIN_URL: ${MAIN_URL}
       FRONTEND_URL: ${FRONTEND_URL}
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
-      # IMPORTANT: Backend listens on 3000 inside the container
       BACKEND_INTERNAL_URL: http://postiz-app:3000
-      
-      # Database Connection (Matches service names below)
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
-      
-      # Secrets
       JWT_SECRET: ${JWT_SECRET}
-      
-      # Config
       IS_GENERAL: "true"
       NEXT_PUBLIC_IS_GENERAL: "true"
       API_LIMIT: 50
-      
-      # Storage
       STORAGE_PROVIDER: local
       UPLOAD_DIRECTORY: /uploads
       NEXT_PUBLIC_UPLOAD_DIRECTORY: /uploads
-      
-      # Pass all other ENV variables from Dokploy automatically
       EMAIL_PROVIDER: ${EMAIL_PROVIDER}
       RESEND_API_KEY: ${RESEND_API_KEY}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
       EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
-      
-      # Social Keys (Add the rest of your keys here as needed)
       X_API_KEY: ${X_API_KEY}
       X_API_SECRET: ${X_API_SECRET}
       LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
@@ -67,7 +50,6 @@ services:
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
       INSTAGRAM_APP_ID: ${INSTAGRAM_APP_ID}
       INSTAGRAM_APP_SECRET: ${INSTAGRAM_APP_SECRET}
-      # ... (The rest of your keys are passed automatically if defined in Dokploy Env)
 
   postgres:
     image: postgres:17-alpine
