@@ -1,73 +1,74 @@
 services:
   postiz-app:
-    # ---------------------------------------------------------
-    # BUILD FROM SOURCE (Keeps your Logos & React Changes)
-    # ---------------------------------------------------------
     build:
       context: .
       dockerfile: Dockerfile.dev
       args:
         NEXT_PUBLIC_IS_GENERAL: "true"
-        # These URLs are baked into the React code during build
         NEXT_PUBLIC_BACKEND_URL: "https://postz.devad.io/api"
         FRONTEND_URL: "https://postz.devad.io"
-        # Force a rebuild when you change code
-        BUILD_DATE: "custom-build-v1" 
-        CACHE_BUST_TOKEN: "v1"
-
+        BUILD_DATE: "custom-build-v2"  # Increment to force rebuild
+        CACHE_BUST_TOKEN: "v2"
     restart: always
     
-    # ---------------------------------------------------------
-    # RUNTIME CONFIGURATION
-    # ---------------------------------------------------------
     environment:
-      # URLs
+      # URLs - Use .env values, don't override!
       MAIN_URL: ${MAIN_URL}
       FRONTEND_URL: ${FRONTEND_URL}
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
-      # Internal: Dockerfile.dev runs app on 3000, Nginx on 5000
-      BACKEND_INTERNAL_URL: "http://localhost:3000"
+      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL}  # ← FIX: Use .env value
       
-      # Secrets & DB
+      # Database - Use .env values
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postiz-postgres:5432/${POSTGRES_DB}"
-      REDIS_URL: "redis://postiz-redis:6379"
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
       
       # Configuration
-      IS_GENERAL: "true"
-      NEXT_PUBLIC_IS_GENERAL: "true"
-      STORAGE_PROVIDER: "local"
-      UPLOAD_DIRECTORY: "/uploads"
-      NEXT_PUBLIC_UPLOAD_DIRECTORY: "/uploads"
+      IS_GENERAL: ${IS_GENERAL}
+      NEXT_PUBLIC_IS_GENERAL: ${NEXT_PUBLIC_IS_GENERAL}
+      DISABLE_REGISTRATION: ${DISABLE_REGISTRATION}
+      API_LIMIT: ${API_LIMIT}
       
-      # Pass Environment Variables
+      # Storage
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER}
+      UPLOAD_DIRECTORY: ${UPLOAD_DIRECTORY}
+      NEXT_PUBLIC_UPLOAD_DIRECTORY: ${NEXT_PUBLIC_UPLOAD_DIRECTORY}
+      
+      # Email
       EMAIL_PROVIDER: ${EMAIL_PROVIDER}
       RESEND_API_KEY: ${RESEND_API_KEY}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
       EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
-      X_API_KEY: ${X_API_KEY}
-      X_API_SECRET: ${X_API_SECRET}
+      
+      # Social Media
       LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
       LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}
+      TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME}
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+      NTBA_FIX_350: ${NTBA_FIX_350}
+      X_API_KEY: ${X_API_KEY}
+      X_API_SECRET: ${X_API_SECRET}
+      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET}
+      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID}
+      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET}
       FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
       INSTAGRAM_APP_ID: ${INSTAGRAM_APP_ID}
       INSTAGRAM_APP_SECRET: ${INSTAGRAM_APP_SECRET}
       YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID}
       YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET}
-      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID}
-      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET}
-      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID}
-      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET}
-
+    
     volumes:
       - postiz-config:/config/
       - postiz-uploads:/uploads/
+    
     depends_on:
       postiz-postgres:
         condition: service_healthy
       postiz-redis:
         condition: service_healthy
+    
     networks:
       - dokploy-network
 
