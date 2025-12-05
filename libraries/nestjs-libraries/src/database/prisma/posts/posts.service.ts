@@ -165,13 +165,13 @@ export class PostsService {
     return this._postRepository.getPosts(orgId, query);
   }
 
-  async updateMedia(id: string, imagesList: any[], convertToJPEG = false) {
+  async updateMedia(id: string, mediaList: any[], convertToJPEG = false) {
     try {
       let imageUpdateNeeded = false;
       const getImageList = await Promise.all(
         (
           await Promise.all(
-            (imagesList || []).map(async (p: any) => {
+            (mediaList || []).map(async (p: any) => {
               if (!p.path && p.id) {
                 imageUpdateNeeded = true;
                 return this._mediaService.getMediaById(p.id);
@@ -191,7 +191,7 @@ export class PostsService {
                     process.env.NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY +
                     m.path
                   : m.path,
-              type: 'image',
+              type: m.type || 'image',
               path:
                 m.path.indexOf('http') === -1
                   ? process.env.UPLOAD_DIRECTORY + m.path
@@ -260,7 +260,7 @@ export class PostsService {
 
       return getImageList;
     } catch (err: any) {
-      return imagesList;
+      return mediaList;
     }
   }
 
@@ -273,7 +273,7 @@ export class PostsService {
           ...post,
           image: await this.updateMedia(
             post.id,
-            JSON.parse(post.image || '[]'),
+            JSON.parse(post.media || '[]'),
             convertToJPEG
           ),
         }))
