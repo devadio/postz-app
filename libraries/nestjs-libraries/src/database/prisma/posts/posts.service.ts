@@ -60,7 +60,7 @@ export class PostsService {
     private _shortLinkService: ShortLinkService,
     private _webhookService: WebhooksService,
     private openaiService: OpenaiService
-  ) {}
+  ) { }
 
   checkPending15minutesBack() {
     return this._postRepository.checkPending15minutesBack();
@@ -152,11 +152,11 @@ export class PostsService {
       post!,
       ...(post?.childrenPost?.length
         ? await this.getPostsRecursively(
-            post?.childrenPost?.[0]?.id,
-            false,
-            orgId,
-            false
-          )
+          post?.childrenPost?.[0]?.id,
+          false,
+          orgId,
+          false
+        )
         : []),
     ];
   }
@@ -187,11 +187,11 @@ export class PostsService {
               url:
                 m.path.indexOf('http') === -1
                   ? process.env.FRONTEND_URL +
-                    '/' +
-                    process.env.NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY +
-                    m.path
+                  '/' +
+                  process.env.NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY +
+                  m.path
                   : m.path,
-              type: 'image',
+              type: m.path.split('?')[0].toLowerCase().endsWith('.mp4') || m.path.split('?')[0].toLowerCase().endsWith('.mov') ? 'video' : 'image',
               path:
                 m.path.indexOf('http') === -1
                   ? process.env.UPLOAD_DIRECTORY + m.path
@@ -235,9 +235,9 @@ export class PostsService {
                 url:
                   path.indexOf('http') === -1
                     ? process.env.FRONTEND_URL +
-                      '/' +
-                      process.env.NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY +
-                      path
+                    '/' +
+                    process.env.NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY +
+                    path
                     : path,
                 type: 'image',
                 path:
@@ -357,8 +357,7 @@ export class PostsService {
         await this._notificationService.inAppNotification(
           firstPost.organizationId,
           `Error posting on ${firstPost.integration?.providerIdentifier} for ${firstPost?.integration?.name}`,
-          `An error occurred while posting on ${
-            firstPost.integration?.providerIdentifier
+          `An error occurred while posting on ${firstPost.integration?.providerIdentifier
           }${err?.message ? `: ${err?.message}` : ``}`,
           true
         );
@@ -503,7 +502,7 @@ export class PostsService {
             post.postId,
             post.releaseURL
           );
-        } catch (err) {}
+        } catch (err) { }
       }
 
       try {
@@ -537,7 +536,7 @@ export class PostsService {
           publishedPosts[0].postId,
           JSON.parse(newPosts[0].settings || '{}')
         );
-      } catch (err) {}
+      } catch (err) { }
 
       return {
         postId: publishedPosts[0].postId,
@@ -894,9 +893,8 @@ export class PostsService {
                 })),
                 {
                   id: '',
-                  content: `Check out the full story here:\n${
-                    body.postId || body.url
-                  }`,
+                  content: `Check out the full story here:\n${body.postId || body.url
+                    }`,
                   image: [],
                 },
               ],
