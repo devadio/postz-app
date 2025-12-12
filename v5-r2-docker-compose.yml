@@ -7,7 +7,7 @@ services:
         NEXT_PUBLIC_IS_GENERAL: "true"
         NEXT_PUBLIC_BACKEND_URL: "https://postz.devad.io/api"
         FRONTEND_URL: "https://postz.devad.io"
-        BUILD_DATE: "custom-build-v3"  # Incremented to force rebuild
+        BUILD_DATE: "custom-build-v3"  # Incremented to force rebuilding
         CACHE_BUST_TOKEN: "v3"
     restart: always
     
