@@ -7,8 +7,8 @@ services:
         NEXT_PUBLIC_IS_GENERAL: "true"
         NEXT_PUBLIC_BACKEND_URL: "https://postz.devad.io/api"
         FRONTEND_URL: "https://postz.devad.io"
-        BUILD_DATE: "custom-build-v3"  # Incremented to force rebuilding
-        CACHE_BUST_TOKEN: "v3"
+        BUILD_DATE: "custom-build-v4"  # Incremented to force rebuild
+        CACHE_BUST_TOKEN: "v4"
     restart: always
     
     environment:
@@ -28,6 +28,10 @@ services:
       NEXT_PUBLIC_IS_GENERAL: ${NEXT_PUBLIC_IS_GENERAL}
       DISABLE_REGISTRATION: ${DISABLE_REGISTRATION}
       API_LIMIT: ${API_LIMIT}
+
+      # === UPLOAD LIMITS (Crucial for Video) ===
+      BODY_SIZE_LIMIT: ${BODY_SIZE_LIMIT}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE}
       
       # Storage - Cloudflare R2
       STORAGE_PROVIDER: ${STORAGE_PROVIDER}
@@ -37,6 +41,7 @@ services:
       CLOUDFLARE_BUCKETNAME: ${CLOUDFLARE_BUCKETNAME}
       CLOUDFLARE_BUCKET_URL: ${CLOUDFLARE_BUCKET_URL}
       CLOUDFLARE_REGION: ${CLOUDFLARE_REGION}
+      CLOUDFLARE_ENDPOINT: ${CLOUDFLARE_ENDPOINT}
       
       # Email
       EMAIL_PROVIDER: ${EMAIL_PROVIDER}
